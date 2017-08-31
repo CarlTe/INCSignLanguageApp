@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">INC Sign Language App</string>
+    <string name="action_settings">Settings</string>
+    <string name="search_hint">Search sign language</string>
+    <string name="search_placeholder">Search</string>
+    <string name="title_activity_searchable">Search results</string>
+    <string name="title_activity_video">Sign Language Video</string>
+    <string name="loop_video">Loop video</string>
+    <string name="about">About INC</string>
+    <string name="category">Category:</string>
+    <string name="categories">Categories:</string>
+    <string name="related">Related word:</string>
+    <string name="relateds">Related words:</string>
+</resources>

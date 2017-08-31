@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="org.iglesianicristo.cfo.csd.signlanguageapp.VideoActivity"
+    tools:showIn="@layout/activity_video" >
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/textView_word"
+        android:textSize="36sp"
+        android:layout_margin="@dimen/video_margin"
+        android:paddingLeft="@dimen/video_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/video_view" />
+
+    <TextView
+        android:id="@+id/textView_categoriesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/video_margin"
+        android:paddingLeft="@dimen/video_margin"
+        app:layout_constraintLeft_toRightOf="@id/video_view"
+        app:layout_constraintTop_toBottomOf="@+id/textView_word" />
+
+    <TextView
+        android:id="@+id/textView_categories"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/video_margin"
+        app:layout_constraintLeft_toRightOf="@+id/textView_categoriesLabel"
+        app:layout_constraintTop_toBottomOf="@+id/textView_word" />
+
+    <TextView
+        android:id="@+id/textView_relatedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/video_margin"
+        android:paddingLeft="@dimen/video_margin"
+        app:layout_constraintLeft_toRightOf="@id/video_view"
+        app:layout_constraintTop_toBottomOf="@+id/textView_categoriesLabel" />
+
+    <TextView
+        android:id="@+id/textView_related"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/video_view"
+        app:layout_constraintTop_toBottomOf="@+id/textView_relatedLabel" />
+
+</android.support.constraint.ConstraintLayout>
