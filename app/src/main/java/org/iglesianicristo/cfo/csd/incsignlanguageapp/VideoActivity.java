@@ -1,6 +1,7 @@
 package org.iglesianicristo.cfo.csd.incsignlanguageapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,7 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.IOException;
@@ -43,7 +47,9 @@ public class VideoActivity extends AppCompatActivity {
         String word = intent.getStringExtra(SearchableActivity.VIDEO_WORD);
         String cat = intent.getStringExtra(SearchableActivity.VIDEO_CAT);
         String root = intent.getStringExtra(SearchableActivity.VIDEO_ROOT);
-        String fave = intent.getStringExtra(SearchableActivity.VIDEO_FAVE);
+        Boolean fave = intent.getBooleanExtra(SearchableActivity.VIDEO_FAVE,false);
+        final Integer pos = intent.getIntExtra(RecyclerViewAdapter.ADAPTER_POSITION,0);
+
         getSupportActionBar().setTitle(word);
         TextView textViewWord = (TextView) findViewById(R.id.textView_word);
         textViewWord.setText(word);
@@ -54,8 +60,15 @@ public class VideoActivity extends AppCompatActivity {
             if(cat.contains(",")) textViewCatLabel.setText(R.string.categories);
             else textViewCatLabel.setText(R.string.category);
         }
-
         TextView textViewRelated = (TextView) findViewById(R.id.textView_related);
+        CheckBox checkBox = (CheckBox) findViewById(R.id.favorite);
+        checkBox.setChecked(fave);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SearchableActivity.faves.set(pos,isChecked);
+            }
+        });
 
         // read from SLA database
         SLAdbHelper mDbHelper = new SLAdbHelper(this);
@@ -116,10 +129,11 @@ public class VideoActivity extends AppCompatActivity {
             Log.e("Error",e.getMessage());
             e.printStackTrace();
         }
+
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
+                mp.setLooping(MainActivity.loopVideo);
             }
         });
         videoView.start();

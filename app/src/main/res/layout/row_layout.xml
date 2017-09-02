@@ -16,27 +16,33 @@
 
     <TextView
         android:id="@+id/secondLine"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="20dip"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/icon"
         android:ellipsize="marquee"
         android:maxLines="1"
-        android:text="Description"
         android:textSize="12sp" />
 
     <TextView
         android:id="@+id/firstLine"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/secondLine"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
         android:layout_toRightOf="@id/icon"
         android:gravity="center_vertical"
-        android:text="Example application"
         android:textSize="18sp" />
+
+    <CheckBox
+        android:id="@+id/favorite"
+        android:button="@android:drawable/btn_star"
+        android:background="@android:color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

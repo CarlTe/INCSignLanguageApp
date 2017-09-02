@@ -6,17 +6,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+    public static final String ADAPTER_POSITION = "ADAPTER_POSITION";
     private List<String> words;
     private List<String> cats;
     private List<String> files;
     private List<String> roots;
-    private List<Integer> faves;
+    private List<Boolean> faves;
     private Context context;
 
     // Provide a reference to the views for each data item
@@ -27,6 +30,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public ImageView catIcon;
         public TextView txtHeader;
         public TextView txtFooter;
+        public CheckBox favChk;
         public View layout;
 
         public ViewHolder(View v) {
@@ -35,6 +39,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             catIcon = (ImageView) v.findViewById(R.id.icon);
             txtHeader = (TextView) v.findViewById(R.id.firstLine);
             txtFooter = (TextView) v.findViewById(R.id.secondLine);
+            favChk = (CheckBox) v.findViewById(R.id.favorite);
+            favChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    faves.set(getAdapterPosition(),isChecked);
+                }
+            });
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -44,6 +55,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     intent.putExtra(SearchableActivity.VIDEO_FILE, files.get(getAdapterPosition()));
                     intent.putExtra(SearchableActivity.VIDEO_ROOT, roots.get(getAdapterPosition()));
                     intent.putExtra(SearchableActivity.VIDEO_FAVE, faves.get(getAdapterPosition()));
+                    intent.putExtra(ADAPTER_POSITION,getAdapterPosition());
                     context.startActivity(intent);
                 }
             });
@@ -51,7 +63,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerViewAdapter(Context myContext, List<String> myWords, List<String> myCats, List<String> myFiles, List<String> myRoots, List<Integer> myFaves) {
+    public RecyclerViewAdapter(Context myContext, List<String> myWords, List<String> myCats, List<String> myFiles, List<String> myRoots, List<Boolean> myFaves) {
         context = myContext;
         words = myWords;
         cats = myCats;
@@ -81,6 +93,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.catIcon.setImageResource(R.mipmap.ic_launcher);
         holder.txtHeader.setText(words.get(position));
         holder.txtFooter.setText(cats.get(position));
+        holder.favChk.setChecked(faves.get(position));
     }
 
     // Return the size of your dataset (invoked by the layout manager)

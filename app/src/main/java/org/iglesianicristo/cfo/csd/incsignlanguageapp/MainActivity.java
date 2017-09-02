@@ -26,9 +26,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String CATEGORY_FILTER = "org.iglesianicristo.cfo.csd.signlanguageapp.CATEGORY_FILTER";
     public static final String CATEGORY_NAME = "org.iglesianicristo.cfo.csd.signlanguageapp.CATEGORY_NAME";
+    public static Boolean loopVideo = true;
+    private SharedPreferences sharedPref;
     private MenuItem searchMenuItem;
     private SearchView searchView;
-    SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,8 +130,9 @@ public class MainActivity extends AppCompatActivity {
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
+        loopVideo = sharedPref.getBoolean(getString(R.string.loop_video), true);
         MenuItem loopMenuItem = menu.findItem(R.id.loop_video);
-        loopMenuItem.setChecked(sharedPref.getBoolean(getString(R.string.loop_video), true));
+        loopMenuItem.setChecked(loopVideo);
 
         return true;
     }
@@ -144,9 +146,10 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if(id == R.id.loop_video) {
-            item.setChecked(!item.isChecked());
+            loopVideo = !loopVideo;
+            item.setChecked(loopVideo);
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean(getString(R.string.loop_video), item.isChecked());
+            editor.putBoolean(getString(R.string.loop_video), loopVideo);
             editor.apply();
             return true;
         }

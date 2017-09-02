@@ -30,7 +30,7 @@ public class SearchableActivity extends AppCompatActivity {
     private List<String> cats = new ArrayList<>();
     private List<String> files = new ArrayList<>();
     private List<String> roots = new ArrayList<>();
-    private List<Integer> faves = new ArrayList<>();
+    public static List<Boolean> faves = new ArrayList<>();
     public static final String VIDEO_WORD = "org.iglesianicristo.cfo.csd.signlanguageapp.VIDEO_WORD";
     public static final String VIDEO_CAT = "org.iglesianicristo.cfo.csd.signlanguageapp.VIDEO_CAT";
     public static final String VIDEO_FILE = "org.iglesianicristo.cfo.csd.signlanguageapp.VIDEO_FILE";
@@ -116,6 +116,12 @@ public class SearchableActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
+    }
+
     private void search(Intent intent) {
         words.clear();
         cats.clear();
@@ -132,7 +138,7 @@ public class SearchableActivity extends AppCompatActivity {
             cats.add(extras[1]);
             files.add(extras[2]);
             roots.add(extras[3]);
-            faves.add(Integer.valueOf(extras[4]));
+            faves.add(extras[4]=="1");
 
             getSupportActionBar().setTitle(extras[0]);
 
@@ -141,7 +147,7 @@ public class SearchableActivity extends AppCompatActivity {
             newIntent.putExtra(SearchableActivity.VIDEO_CAT, extras[1]);
             newIntent.putExtra(SearchableActivity.VIDEO_FILE, extras[2]);
             newIntent.putExtra(SearchableActivity.VIDEO_ROOT, extras[3]);
-            newIntent.putExtra(SearchableActivity.VIDEO_FAVE, extras[4]);
+            newIntent.putExtra(SearchableActivity.VIDEO_FAVE, extras[4]=="1");
             context.startActivity(newIntent);
         } else {
             // read from SLA database
@@ -193,7 +199,7 @@ public class SearchableActivity extends AppCompatActivity {
                 words.add(word);
                 files.add(id);
                 roots.add(root);
-                faves.add(fave);
+                faves.add(fave==1);
                 selection = SLAdbContract.SLAdbCAT.COL_ID + " in (?";
                 int len = cat.length();
                 if (len > 1)
@@ -216,5 +222,4 @@ public class SearchableActivity extends AppCompatActivity {
             mDbHelper.close();
         }
     }
-
 }
