@@ -1,7 +1,7 @@
 package org.iglesianicristo.cfo.csd.incsignlanguageapp;
 
+import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.IOException;
@@ -44,6 +43,7 @@ public class VideoActivity extends AppCompatActivity {
         });
 
         intent = getIntent();
+        final Integer id = intent.getIntExtra(SearchableActivity.VIDEO_ID,0);
         String word = intent.getStringExtra(SearchableActivity.VIDEO_WORD);
         String cat = intent.getStringExtra(SearchableActivity.VIDEO_CAT);
         String root = intent.getStringExtra(SearchableActivity.VIDEO_ROOT);
@@ -67,6 +67,13 @@ public class VideoActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SearchableActivity.faves.set(pos,isChecked);
+                SLAdbHelper mDbHelper = new SLAdbHelper(getApplicationContext());
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                ContentValues cv = new ContentValues();
+                cv.put(SLAdbContract.SLAdbSLA.COL_FAVE,(isChecked?1:0));
+                db.update(SLAdbContract.SLAdbSLA.TABLE_NAME, cv, SLAdbContract.SLAdbSLA.COL_ID+"="+id,null);
+                db.close();
+                mDbHelper.close();
             }
         });
 

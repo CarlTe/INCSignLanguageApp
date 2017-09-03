@@ -26,16 +26,18 @@ public class SearchableActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private List<Integer> ids = new ArrayList<>();
     private List<String> words = new ArrayList<>();
     private List<String> cats = new ArrayList<>();
     private List<String> files = new ArrayList<>();
     private List<String> roots = new ArrayList<>();
     public static List<Boolean> faves = new ArrayList<>();
-    public static final String VIDEO_WORD = "org.iglesianicristo.cfo.csd.signlanguageapp.VIDEO_WORD";
-    public static final String VIDEO_CAT = "org.iglesianicristo.cfo.csd.signlanguageapp.VIDEO_CAT";
-    public static final String VIDEO_FILE = "org.iglesianicristo.cfo.csd.signlanguageapp.VIDEO_FILE";
-    public static final String VIDEO_ROOT = "org.iglesianicristo.cfo.csd.signlanguageapp.VIDEO_ROOT";
-    public static final String VIDEO_FAVE = "org.iglesianicristo.cfo.csd.signlanguageapp.VIDEO_FAVE";
+    public static final String VIDEO_ID = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_ID";
+    public static final String VIDEO_WORD = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_WORD";
+    public static final String VIDEO_CAT = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_CAT";
+    public static final String VIDEO_FILE = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_FILE";
+    public static final String VIDEO_ROOT = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_ROOT";
+    public static final String VIDEO_FAVE = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_FAVE";
     private MenuItem searchMenuItem;
     private SearchView searchView;
 
@@ -75,7 +77,7 @@ public class SearchableActivity extends AppCompatActivity {
         search(getIntent());
 
         // define an adapter
-        mAdapter = new RecyclerViewAdapter(this, words, cats, files, roots, faves);
+        mAdapter = new RecyclerViewAdapter(this, ids, words, cats, files, roots, faves);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -123,6 +125,7 @@ public class SearchableActivity extends AppCompatActivity {
     }
 
     private void search(Intent intent) {
+        ids.clear();
         words.clear();
         cats.clear();
         files.clear();
@@ -134,20 +137,22 @@ public class SearchableActivity extends AppCompatActivity {
             String extra = intent.getStringExtra(SearchManager.EXTRA_DATA_KEY);
             String[] extras = extra.split(":");
 
-            words.add(extras[0]);
-            cats.add(extras[1]);
-            files.add(extras[2]);
-            roots.add(extras[3]);
-            faves.add(extras[4]=="1");
+            ids.add(Integer.valueOf(extras[0]));
+            words.add(extras[1]);
+            cats.add(extras[2]);
+            files.add(extras[3]);
+            roots.add(extras[4]);
+            faves.add(extras[5].equals("1"));
 
-            getSupportActionBar().setTitle(extras[0]);
+            getSupportActionBar().setTitle(extras[1]);
 
             Intent newIntent = new Intent(context, VideoActivity.class);
-            newIntent.putExtra(SearchableActivity.VIDEO_WORD, extras[0]);
-            newIntent.putExtra(SearchableActivity.VIDEO_CAT, extras[1]);
-            newIntent.putExtra(SearchableActivity.VIDEO_FILE, extras[2]);
-            newIntent.putExtra(SearchableActivity.VIDEO_ROOT, extras[3]);
-            newIntent.putExtra(SearchableActivity.VIDEO_FAVE, extras[4]=="1");
+            newIntent.putExtra(SearchableActivity.VIDEO_ID, extras[0]);
+            newIntent.putExtra(SearchableActivity.VIDEO_WORD, extras[1]);
+            newIntent.putExtra(SearchableActivity.VIDEO_CAT, extras[2]);
+            newIntent.putExtra(SearchableActivity.VIDEO_FILE, extras[3]);
+            newIntent.putExtra(SearchableActivity.VIDEO_ROOT, extras[4]);
+            newIntent.putExtra(SearchableActivity.VIDEO_FAVE, extras[5].equals("1"));
             context.startActivity(newIntent);
         } else {
             // read from SLA database
@@ -155,6 +160,7 @@ public class SearchableActivity extends AppCompatActivity {
             SQLiteDatabase db = mDbHelper.getReadableDatabase();
             // projection to specify columns to retrieve
             String[] projection = {
+                    SLAdbContract.SLAdbSLA.COL_ID,
                     SLAdbContract.SLAdbSLA.COL_WORD,
                     SLAdbContract.SLAdbSLA.COL_CAT,
                     SLAdbContract.SLAdbSLA.COL_FILE,
@@ -173,8 +179,13 @@ public class SearchableActivity extends AppCompatActivity {
             } else {
                 getSupportActionBar().setTitle(intent.getStringExtra(MainActivity.CATEGORY_NAME));
                 String query = intent.getStringExtra(MainActivity.CATEGORY_FILTER);
-                selection = SLAdbContract.SLAdbSLA.COL_CAT + " like ?";
-                selectionArgs = new String[]{"%" + query + "%"};
+                if(query.equals("0")) {
+                    selection = SLAdbContract.SLAdbSLA.COL_FAVE + " = ?";
+                    selectionArgs = new String[]{"1"};
+                } else {
+                    selection = SLAdbContract.SLAdbSLA.COL_CAT + " like ?";
+                    selectionArgs = new String[]{"%" + query + "%"};
+                }
             }
 
             // sort
@@ -191,13 +202,15 @@ public class SearchableActivity extends AppCompatActivity {
             );
 
             while (cursor.moveToNext()) {
+                Integer id = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_ID));
                 String word = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_WORD));
                 String cat = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_CAT));
-                String id = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FILE));
+                String file = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FILE));
                 String root = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_ROOT));
                 Integer fave = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FAVE));
+                ids.add(id);
                 words.add(word);
-                files.add(id);
+                files.add(file);
                 roots.add(root);
                 faves.add(fave==1);
                 selection = SLAdbContract.SLAdbCAT.COL_ID + " in (?";

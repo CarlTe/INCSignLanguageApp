@@ -1,7 +1,9 @@
 package org.iglesianicristo.cfo.csd.incsignlanguageapp;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     public static final String ADAPTER_POSITION = "ADAPTER_POSITION";
+    private List<Integer> ids;
     private List<String> words;
     private List<String> cats;
     private List<String> files;
@@ -44,12 +47,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     faves.set(getAdapterPosition(),isChecked);
+                    SLAdbHelper mDbHelper = new SLAdbHelper(context);
+                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                    ContentValues cv = new ContentValues();
+                    cv.put(SLAdbContract.SLAdbSLA.COL_FAVE,(isChecked?1:0));
+                    db.update(SLAdbContract.SLAdbSLA.TABLE_NAME, cv, SLAdbContract.SLAdbSLA.COL_ID+"="+ids.get(getAdapterPosition()),null);
+                    db.close();
+                    mDbHelper.close();
                 }
             });
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, VideoActivity.class);
+                    intent.putExtra(SearchableActivity.VIDEO_ID, ids.get(getAdapterPosition()));
                     intent.putExtra(SearchableActivity.VIDEO_WORD, words.get(getAdapterPosition()));
                     intent.putExtra(SearchableActivity.VIDEO_CAT, cats.get(getAdapterPosition()));
                     intent.putExtra(SearchableActivity.VIDEO_FILE, files.get(getAdapterPosition()));
@@ -63,8 +74,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerViewAdapter(Context myContext, List<String> myWords, List<String> myCats, List<String> myFiles, List<String> myRoots, List<Boolean> myFaves) {
+    public RecyclerViewAdapter(Context myContext, List<Integer> myIds, List<String> myWords, List<String> myCats, List<String> myFiles, List<String> myRoots, List<Boolean> myFaves) {
         context = myContext;
+        ids = myIds;
         words = myWords;
         cats = myCats;
         files = myFiles;

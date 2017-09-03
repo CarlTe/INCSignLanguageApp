@@ -14,7 +14,7 @@ import java.util.List;
 
 public class RecyclerViewAdapterMain extends RecyclerView.Adapter<RecyclerViewAdapterMain.ViewHolder> {
     private List<String> cats;
-    private List<String> files;
+    private List<String> ids;
     private Context context;
 
     // Provide a reference to the views for each data item
@@ -36,7 +36,7 @@ public class RecyclerViewAdapterMain extends RecyclerView.Adapter<RecyclerViewAd
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, SearchableActivity.class);
-                    intent.putExtra(MainActivity.CATEGORY_FILTER, files.get(getAdapterPosition()));
+                    intent.putExtra(MainActivity.CATEGORY_FILTER, ids.get(getAdapterPosition()));
                     intent.putExtra(MainActivity.CATEGORY_NAME, cats.get(getAdapterPosition()));
                     context.startActivity(intent);
                 }
@@ -45,10 +45,10 @@ public class RecyclerViewAdapterMain extends RecyclerView.Adapter<RecyclerViewAd
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerViewAdapterMain(Context myContext, List<String> myCats, List<String> myFiles) {
+    public RecyclerViewAdapterMain(Context myContext, List<String> myCats, List<String> myIds) {
         context = myContext;
         cats = myCats;
-        files = myFiles;
+        ids = myIds;
     }
 
     // Create new views (invoked by the layout manager)

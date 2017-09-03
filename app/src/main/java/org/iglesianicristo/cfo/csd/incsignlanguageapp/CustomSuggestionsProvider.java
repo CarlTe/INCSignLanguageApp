@@ -77,7 +77,7 @@ public class CustomSuggestionsProvider extends ContentProvider {
             // category icon
             Uri searchIconUri = Uri.parse("android.resource://org.iglesianicristo.cfo.csd.signlanguageapp/mipmap/ic_launcher.png");
             // add to cursor
-            matrixCursor.addRow(new Object[] {id,word,cat,searchIconUri,word+":"+cat+":"+file+":"+root+":"+fave});
+            matrixCursor.addRow(new Object[] {id,word,cat,searchIconUri,id+":"+word+":"+cat+":"+file+":"+root+":"+fave});
             csr.close();
         }
         cursor.close();
