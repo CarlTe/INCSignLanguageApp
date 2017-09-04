@@ -8,13 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -22,8 +23,8 @@ import java.io.IOException;
 
 public class VideoActivity extends AppCompatActivity {
     private VideoView videoView;
-    private MediaController mediaController;
-    private Intent intent;
+    private int videoFile;
+    private String packageName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class VideoActivity extends AppCompatActivity {
             }
         });
 
-        intent = getIntent();
+        Intent intent = getIntent();
         final Integer id = intent.getIntExtra(SearchableActivity.VIDEO_ID,0);
         String word = intent.getStringExtra(SearchableActivity.VIDEO_WORD);
         String cat = intent.getStringExtra(SearchableActivity.VIDEO_CAT);
@@ -52,11 +53,12 @@ public class VideoActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(word);
         TextView textViewWord = (TextView) findViewById(R.id.textView_word);
         int variantsNum = var.length();
-        if(variantsNum > 1) textViewWord.setText(var); // this must be 'collective' name
-        else {
+        if(variantsNum > 1) {
+            textViewWord.setText(var); // this must be 'collective' name
+            variantsNum = 1;
+        } else {
             textViewWord.setText(word);
-            if(variantsNum==1) variantsNum = Integer.valueOf(var); // this must be number of variants
-            else variantsNum = 0;
+            variantsNum = Integer.valueOf(var); // number of variants
         }
         TextView textViewCat = (TextView) findViewById(R.id.textView_categories);
         textViewCat.setText(cat);
@@ -133,25 +135,25 @@ public class VideoActivity extends AppCompatActivity {
         }
 
         videoView = (VideoView)findViewById(R.id.video_view);
-        mediaController = new MediaController(this);
-        mediaController.setAnchorView(videoView);
-        videoView.setMediaController(mediaController);
-        try {
-            String packageName = getPackageName();
-            String data = "v"+intent.getStringExtra(SearchableActivity.VIDEO_FILE);
-            videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier(data, "raw", packageName)));
-        } catch (Exception e) {
-            Log.e("Error",e.getMessage());
-            e.printStackTrace();
-        }
+
+        packageName = getPackageName();
+        videoFile = Integer.valueOf(intent.getStringExtra(SearchableActivity.VIDEO_FILE));
+        videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+videoFile, "raw", packageName)));
 
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(MainActivity.loopVideo);
+                mp.setLooping(true);
             }
         });
         videoView.start();
+
+        if(variantsNum > 1) { // show bottom navigation tab is there are 2 or more variants of this sign
+            BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+            if(variantsNum == 2) navigation.getMenu().removeItem(R.id.navigation_var3);
+            navigation.setVisibility(View.VISIBLE);
+            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        }
     }
 
     @Override
@@ -159,4 +161,25 @@ public class VideoActivity extends AppCompatActivity {
         super.onResume();
         videoView.start();
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_var1:
+                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+videoFile, "raw", packageName)));
+                    return true;
+                case R.id.navigation_var2:
+                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+(videoFile+1), "raw", packageName)));
+                    return true;
+                case R.id.navigation_var3:
+                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+(videoFile+2), "raw", packageName)));
+                    return true;
+            }
+            return false;
+        }
+
+    };
 }

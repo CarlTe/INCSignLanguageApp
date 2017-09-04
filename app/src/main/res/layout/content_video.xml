@@ -67,4 +67,14 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/textView_relatedLabel" />
 
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/constraintLayout"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/navigation" />
+
 </android.support.constraint.ConstraintLayout>

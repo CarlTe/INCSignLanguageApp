@@ -2,7 +2,6 @@ package org.iglesianicristo.cfo.csd.incsignlanguageapp;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,16 +25,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String CATEGORY_FILTER = "org.iglesianicristo.cfo.csd.signlanguageapp.CATEGORY_FILTER";
     public static final String CATEGORY_NAME = "org.iglesianicristo.cfo.csd.signlanguageapp.CATEGORY_NAME";
-    public static Boolean loopVideo = true;
-    private SharedPreferences sharedPref;
     private MenuItem searchMenuItem;
     private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sharedPref = getPreferences(Context.MODE_PRIVATE);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -130,10 +125,6 @@ public class MainActivity extends AppCompatActivity {
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
-        loopVideo = sharedPref.getBoolean(getString(R.string.loop_video), true);
-        MenuItem loopMenuItem = menu.findItem(R.id.loop_video);
-        loopMenuItem.setChecked(loopVideo);
-
         return true;
     }
 
@@ -143,16 +134,6 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if(id == R.id.loop_video) {
-            loopVideo = !loopVideo;
-            item.setChecked(loopVideo);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putBoolean(getString(R.string.loop_video), loopVideo);
-            editor.apply();
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }

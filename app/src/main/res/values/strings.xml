@@ -11,4 +11,7 @@
     <string name="categories">Categories:</string>
     <string name="related">Related word:</string>
     <string name="relateds">Related words:</string>
+    <string name="variant1">Variant 1</string>
+    <string name="variant2">Variant 2</string>
+    <string name="variant3">Variant 3</string>
 </resources>
