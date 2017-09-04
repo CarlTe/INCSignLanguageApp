@@ -9,13 +9,13 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -23,8 +23,7 @@ import java.io.IOException;
 
 public class VideoActivity extends AppCompatActivity {
     private VideoView videoView;
-    private MenuItem searchMenuItem;
-    private SearchView searchView;
+    private MediaController mediaController;
     private Intent intent;
 
     @Override
@@ -128,6 +127,9 @@ public class VideoActivity extends AppCompatActivity {
         }
 
         videoView = (VideoView)findViewById(R.id.video_view);
+        mediaController = new MediaController(this);
+        mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
         try {
             String packageName = getPackageName();
             String data = "v"+intent.getStringExtra(SearchableActivity.VIDEO_FILE);
