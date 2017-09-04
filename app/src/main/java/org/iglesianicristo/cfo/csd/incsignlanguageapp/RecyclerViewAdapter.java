@@ -23,6 +23,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private List<String> files;
     private List<String> roots;
     private List<Boolean> faves;
+    private List<String> vars;
     private Context context;
 
     // Provide a reference to the views for each data item
@@ -66,6 +67,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     intent.putExtra(SearchableActivity.VIDEO_FILE, files.get(getAdapterPosition()));
                     intent.putExtra(SearchableActivity.VIDEO_ROOT, roots.get(getAdapterPosition()));
                     intent.putExtra(SearchableActivity.VIDEO_FAVE, faves.get(getAdapterPosition()));
+                    intent.putExtra(SearchableActivity.VIDEO_VAR, vars.get(getAdapterPosition()));
                     intent.putExtra(ADAPTER_POSITION,getAdapterPosition());
                     context.startActivity(intent);
                 }
@@ -74,7 +76,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerViewAdapter(Context myContext, List<Integer> myIds, List<String> myWords, List<String> myCats, List<String> myFiles, List<String> myRoots, List<Boolean> myFaves) {
+    public RecyclerViewAdapter(Context myContext, List<Integer> myIds, List<String> myWords, List<String> myCats, List<String> myFiles, List<String> myRoots, List<Boolean> myFaves, List<String> myVars) {
         context = myContext;
         ids = myIds;
         words = myWords;
@@ -82,6 +84,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         files = myFiles;
         roots = myRoots;
         faves = myFaves;
+        vars = myVars;
     }
 
     // Create new views (invoked by the layout manager)

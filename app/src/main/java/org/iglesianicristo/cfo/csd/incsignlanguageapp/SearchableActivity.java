@@ -32,12 +32,14 @@ public class SearchableActivity extends AppCompatActivity {
     private List<String> files = new ArrayList<>();
     private List<String> roots = new ArrayList<>();
     public static List<Boolean> faves = new ArrayList<>();
+    private List<String> vars = new ArrayList<>();
     public static final String VIDEO_ID = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_ID";
     public static final String VIDEO_WORD = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_WORD";
     public static final String VIDEO_CAT = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_CAT";
     public static final String VIDEO_FILE = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_FILE";
     public static final String VIDEO_ROOT = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_ROOT";
     public static final String VIDEO_FAVE = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_FAVE";
+    public static final String VIDEO_VAR = "org.iglesianicristo.cfo.csd.incsignlanguageapp.VIDEO_VAR";
     private MenuItem searchMenuItem;
     private SearchView searchView;
 
@@ -77,7 +79,7 @@ public class SearchableActivity extends AppCompatActivity {
         search(getIntent());
 
         // define an adapter
-        mAdapter = new RecyclerViewAdapter(this, ids, words, cats, files, roots, faves);
+        mAdapter = new RecyclerViewAdapter(this, ids, words, cats, files, roots, faves, vars);
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -131,6 +133,7 @@ public class SearchableActivity extends AppCompatActivity {
         files.clear();
         roots.clear();
         faves.clear();
+        vars.clear();
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Context context = getApplicationContext();
             // Handle a suggestions click (because the suggestions all use ACTION_VIEW)
@@ -143,6 +146,7 @@ public class SearchableActivity extends AppCompatActivity {
             files.add(extras[3]);
             roots.add(extras[4]);
             faves.add(extras[5].equals("1"));
+            vars.add(extras[6]);
 
             getSupportActionBar().setTitle(extras[1]);
 
@@ -153,6 +157,7 @@ public class SearchableActivity extends AppCompatActivity {
             newIntent.putExtra(SearchableActivity.VIDEO_FILE, extras[3]);
             newIntent.putExtra(SearchableActivity.VIDEO_ROOT, extras[4]);
             newIntent.putExtra(SearchableActivity.VIDEO_FAVE, extras[5].equals("1"));
+            newIntent.putExtra(SearchableActivity.VIDEO_VAR, extras[6]);
             context.startActivity(newIntent);
         } else {
             // read from SLA database
@@ -165,7 +170,8 @@ public class SearchableActivity extends AppCompatActivity {
                     SLAdbContract.SLAdbSLA.COL_CAT,
                     SLAdbContract.SLAdbSLA.COL_FILE,
                     SLAdbContract.SLAdbSLA.COL_ROOT,
-                    SLAdbContract.SLAdbSLA.COL_FAVE
+                    SLAdbContract.SLAdbSLA.COL_FAVE,
+                    SLAdbContract.SLAdbSLA.COL_VAR
             };
             String[] catproj = {SLAdbContract.SLAdbCAT.COL_CAT};
             String selection = "";
@@ -208,11 +214,13 @@ public class SearchableActivity extends AppCompatActivity {
                 String file = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FILE));
                 String root = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_ROOT));
                 Integer fave = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FAVE));
+                String var = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_VAR));
                 ids.add(id);
                 words.add(word);
                 files.add(file);
                 roots.add(root);
                 faves.add(fave==1);
+                vars.add(var);
                 selection = SLAdbContract.SLAdbCAT.COL_ID + " in (?";
                 int len = cat.length();
                 if (len > 1)

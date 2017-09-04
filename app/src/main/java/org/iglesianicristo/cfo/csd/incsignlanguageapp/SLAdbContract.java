@@ -16,6 +16,7 @@ public final class SLAdbContract {
         public static final String COL_CAT = "cat";
         public static final String COL_ROOT = "root";
         public static final String COL_FAVE = "fave";
+        public static final String COL_VAR = "var";
     }
 
     public static final String SQL_CREATE_ENTRIES_SLA =
@@ -25,7 +26,8 @@ public final class SLAdbContract {
                     SLAdbSLA.COL_FILE + " INTEGER," +
                     SLAdbSLA.COL_CAT + " TEXT," +
                     SLAdbSLA.COL_ROOT + " INTEGER," +
-                    SLAdbSLA.COL_FAVE + " INTEGER)";
+                    SLAdbSLA.COL_FAVE + " INTEGER," +
+                    SLAdbSLA.COL_VAR + " TEXT)";
 
     public static final String SQL_DELETE_ENTRIES_SLA =
             "DROP TABLE IF EXISTS " + SLAdbSLA.TABLE_NAME;

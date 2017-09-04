@@ -17,29 +17,10 @@
     <TextView
         android:id="@+id/textView_word"
         android:textSize="36sp"
-        android:layout_margin="@dimen/video_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:paddingLeft="@dimen/video_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/video_view" />
-
-    <TextView
-        android:id="@+id/textView_categoriesLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/video_margin"
-        android:paddingLeft="@dimen/video_margin"
-        app:layout_constraintLeft_toRightOf="@id/video_view"
-        app:layout_constraintTop_toBottomOf="@+id/textView_word" />
-
-    <TextView
-        android:id="@+id/textView_categories"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/video_margin"
-        app:layout_constraintLeft_toRightOf="@+id/textView_categoriesLabel"
-        app:layout_constraintTop_toBottomOf="@+id/textView_word" />
+        app:layout_constraintLeft_toRightOf="@+id/video_view" />
 
     <CheckBox
         android:id="@+id/favorite"
@@ -48,23 +29,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/video_margin"
-        app:layout_constraintBaseline_toBaselineOf="@id/textView_categories"
+        android:layout_marginTop="@dimen/video_margin"
+        app:layout_constraintTop_toTopOf="@id/constraintLayout"
         app:layout_constraintRight_toRightOf="@id/constraintLayout"/>
 
     <TextView
-        android:id="@+id/textView_relatedLabel"
+        android:id="@+id/textView_categoriesLabel"
+        android:textSize="10sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/video_margin"
         android:paddingLeft="@dimen/video_margin"
-        app:layout_constraintLeft_toRightOf="@id/video_view"
-        app:layout_constraintTop_toBottomOf="@+id/textView_categoriesLabel" />
+        app:layout_constraintTop_toBottomOf="@id/textView_word"
+        app:layout_constraintLeft_toRightOf="@+id/video_view" />
+
+    <TextView
+        android:id="@+id/textView_categories"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/video_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@+id/video_view"
+        app:layout_constraintTop_toBottomOf="@id/textView_categoriesLabel"/>
+
+    <TextView
+        android:id="@+id/textView_relatedLabel"
+        android:textSize="10sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/video_margin"
+        app:layout_constraintLeft_toRightOf="@+id/video_view"
+        app:layout_constraintTop_toBottomOf="@id/textView_categories" />
 
     <TextView
         android:id="@+id/textView_related"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/video_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/video_view"
-        app:layout_constraintTop_toBottomOf="@+id/textView_relatedLabel" />
+        app:layout_constraintLeft_toRightOf="@+id/video_view"
+        app:layout_constraintTop_toBottomOf="@id/textView_relatedLabel" />
 
 </android.support.constraint.ConstraintLayout>

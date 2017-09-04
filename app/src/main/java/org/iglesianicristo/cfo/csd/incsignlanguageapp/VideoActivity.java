@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -48,10 +47,17 @@ public class VideoActivity extends AppCompatActivity {
         String root = intent.getStringExtra(SearchableActivity.VIDEO_ROOT);
         Boolean fave = intent.getBooleanExtra(SearchableActivity.VIDEO_FAVE,false);
         final Integer pos = intent.getIntExtra(RecyclerViewAdapter.ADAPTER_POSITION,0);
+        String var = intent.getStringExtra(SearchableActivity.VIDEO_VAR);
 
         getSupportActionBar().setTitle(word);
         TextView textViewWord = (TextView) findViewById(R.id.textView_word);
-        textViewWord.setText(word);
+        int variantsNum = var.length();
+        if(variantsNum > 1) textViewWord.setText(var); // this must be 'collective' name
+        else {
+            textViewWord.setText(word);
+            if(variantsNum==1) variantsNum = Integer.valueOf(var); // this must be number of variants
+            else variantsNum = 0;
+        }
         TextView textViewCat = (TextView) findViewById(R.id.textView_categories);
         textViewCat.setText(cat);
         if(cat.length()>0) {

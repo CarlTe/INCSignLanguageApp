@@ -34,7 +34,8 @@ public class CustomSuggestionsProvider extends ContentProvider {
                 SLAdbContract.SLAdbSLA.COL_CAT,
                 SLAdbContract.SLAdbSLA.COL_FILE,
                 SLAdbContract.SLAdbSLA.COL_ROOT,
-                SLAdbContract.SLAdbSLA.COL_FAVE
+                SLAdbContract.SLAdbSLA.COL_FAVE,
+                SLAdbContract.SLAdbSLA.COL_VAR
         };
         MatrixCursor matrixCursor = new MatrixCursor(suggestionTable);
         String[] catproj = {SLAdbContract.SLAdbCAT.COL_CAT};
@@ -59,6 +60,7 @@ public class CustomSuggestionsProvider extends ContentProvider {
             String file = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FILE));
             String root = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_ROOT));
             Integer fave = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FAVE));
+            String var = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_VAR));
             // form the "where in" select string
             selection = SLAdbContract.SLAdbCAT.COL_ID + " in (?";
             int len = cat.length();
@@ -77,7 +79,7 @@ public class CustomSuggestionsProvider extends ContentProvider {
             // category icon
             Uri searchIconUri = Uri.parse("android.resource://org.iglesianicristo.cfo.csd.signlanguageapp/mipmap/ic_launcher.png");
             // add to cursor
-            matrixCursor.addRow(new Object[] {id,word,cat,searchIconUri,id+":"+word+":"+cat+":"+file+":"+root+":"+fave});
+            matrixCursor.addRow(new Object[] {id,word,cat,searchIconUri,id+":"+word+":"+cat+":"+file+":"+root+":"+fave+":"+var});
             csr.close();
         }
         cursor.close();
