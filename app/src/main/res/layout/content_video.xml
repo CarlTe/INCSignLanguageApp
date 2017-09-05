@@ -73,8 +73,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/constraintLayout"
         android:background="?android:attr/windowBackground"
+        app:layout_constraintBottom_toBottomOf="@id/constraintLayout"
         app:menu="@menu/navigation" />
 
 </android.support.constraint.ConstraintLayout>
