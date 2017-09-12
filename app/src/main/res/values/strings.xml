@@ -14,4 +14,6 @@
     <string name="variant1">Variant 1</string>
     <string name="variant2">Variant 2</string>
     <string name="variant3">Variant 3</string>
+    <string name="variant4">Variant 4</string>
+    <string name="catIcon">SL Category Icon</string>
 </resources>

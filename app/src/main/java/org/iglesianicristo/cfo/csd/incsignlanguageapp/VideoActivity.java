@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
     private VideoView videoView;
@@ -60,14 +63,14 @@ public class VideoActivity extends AppCompatActivity {
             textViewWord.setText(word);
             variantsNum = Integer.valueOf(var); // number of variants
         }
-        TextView textViewCat = (TextView) findViewById(R.id.textView_categories);
-        textViewCat.setText(cat);
-        if(cat.length()>0) {
-            TextView textViewCatLabel = (TextView) findViewById(R.id.textView_categoriesLabel);
-            if(cat.contains(",")) textViewCatLabel.setText(R.string.categories);
-            else textViewCatLabel.setText(R.string.category);
-        }
+
         TextView textViewRelated = (TextView) findViewById(R.id.textView_related);
+        textViewRelated.setText(root);
+        if(root.length()>0) {
+            TextView textViewRelatedLabel = (TextView) findViewById(R.id.textView_relatedLabel);
+            if(root.contains(",")) textViewRelatedLabel.setText(R.string.relateds);
+            else textViewRelatedLabel.setText(R.string.related);
+        }
         CheckBox checkBox = (CheckBox) findViewById(R.id.favorite);
         checkBox.setChecked(fave);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -98,46 +101,39 @@ public class VideoActivity extends AppCompatActivity {
         }
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        // projection
-        String[] projection = {SLAdbContract.SLAdbSLA.COL_WORD};
-
-        // Filter results WHERE
-        String selection = SLAdbContract.SLAdbSLA.COL_ROOT + " = ? and " + SLAdbContract.SLAdbSLA.COL_WORD + " <> ?";
-        String[] selectionArgs = { root, word };
-
-        // sort
-        String sortOrder = SLAdbContract.SLAdbSLA.COL_WORD;
-
-        Cursor cursor = db.query(
-                SLAdbContract.SLAdbSLA.TABLE_NAME,          // The table to query
-                projection,                                 // The columns to return
-                selection,                                  // The columns for the WHERE clause
-                selectionArgs,                              // The values for the WHERE clause
-                null,                                       // don't group the rows
-                null,                                       // don't filter by row groups
-                sortOrder                                   // The sort order
-        );
-
-        String related = "";
-        while(cursor.moveToNext()) {
-            if (related != "") related += ", ";
-            related += cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_WORD));
+        // get Categories
+        String[] catproj = {SLAdbContract.SLAdbCAT.COL_CAT};
+        String selection = SLAdbContract.SLAdbCAT.COL_ID + " in (?";
+        int len = cat.length();
+        if (len > 1)
+            selection += String.format("%0" + (len - 1) + "d", 0).replace("0", ",?");
+        selection += ")";
+        List<String> list = new ArrayList<String>(Arrays.asList(cat.split("")));
+        list.remove(0);
+        String[] selectionArgs = list.toArray(new String[list.size()]);
+        Cursor csr = db.query(SLAdbContract.SLAdbCAT.TABLE_NAME, catproj, selection, selectionArgs, null, null, null);
+        cat = "";
+        while (csr.moveToNext()) {
+            if (cat != "") cat += ", ";
+            cat += csr.getString(csr.getColumnIndexOrThrow(SLAdbContract.SLAdbCAT.COL_CAT));
         }
-        cursor.close();
+        csr.close();
+
         db.close();
         mDbHelper.close();
 
-        textViewRelated.setText(related);
-        if(related.length()>0) {
-            TextView textViewRelatedLabel = (TextView) findViewById(R.id.textView_relatedLabel);
-            if(related.contains(",")) textViewRelatedLabel.setText(R.string.relateds);
-            else textViewRelatedLabel.setText(R.string.related);
+        TextView textViewCat = (TextView) findViewById(R.id.textView_categories);
+        textViewCat.setText(cat);
+        if(cat.length()>0) {
+            TextView textViewCatLabel = (TextView) findViewById(R.id.textView_categoriesLabel);
+            if(cat.contains(",")) textViewCatLabel.setText(R.string.categories);
+            else textViewCatLabel.setText(R.string.category);
         }
 
         videoView = (VideoView)findViewById(R.id.video_view);
 
         packageName = getPackageName();
-        videoFile = Integer.valueOf(intent.getStringExtra(SearchableActivity.VIDEO_FILE));
+        videoFile = intent.getIntExtra(SearchableActivity.VIDEO_FILE,0);
         videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+videoFile, "raw", packageName)));
 
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -148,9 +144,12 @@ public class VideoActivity extends AppCompatActivity {
         });
         videoView.start();
 
-        if(variantsNum > 1) { // show bottom navigation tab is there are 2 or more variants of this sign
+        if(variantsNum > 1) { // show bottom navigation tab if there are 2 or more variants of this sign
             BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-            if(variantsNum == 2) navigation.getMenu().removeItem(R.id.navigation_var3);
+            switch(variantsNum) {
+                case 2: navigation.getMenu().removeItem(R.id.navigation_var3);
+                case 3: navigation.getMenu().removeItem(R.id.navigation_var4);
+            }
             navigation.setVisibility(View.VISIBLE);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         }
@@ -176,6 +175,9 @@ public class VideoActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_var3:
                     videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+(videoFile+2), "raw", packageName)));
+                    return true;
+                case R.id.navigation_var4:
+                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+(videoFile+3), "raw", packageName)));
                     return true;
             }
             return false;

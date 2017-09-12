@@ -14,7 +14,6 @@ public final class SLAdbContract {
         public static final String COL_WORD = "word";
         public static final String COL_FILE = "file";
         public static final String COL_CAT = "cat";
-        public static final String COL_ROOT = "root";
         public static final String COL_FAVE = "fave";
         public static final String COL_VAR = "var";
     }
@@ -25,7 +24,6 @@ public final class SLAdbContract {
                     SLAdbSLA.COL_WORD + " TEXT," +
                     SLAdbSLA.COL_FILE + " INTEGER," +
                     SLAdbSLA.COL_CAT + " TEXT," +
-                    SLAdbSLA.COL_ROOT + " INTEGER," +
                     SLAdbSLA.COL_FAVE + " INTEGER," +
                     SLAdbSLA.COL_VAR + " TEXT)";
 

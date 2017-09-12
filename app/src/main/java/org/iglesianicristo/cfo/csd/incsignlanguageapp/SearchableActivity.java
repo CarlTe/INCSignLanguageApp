@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SearchableActivity extends AppCompatActivity {
@@ -29,7 +28,7 @@ public class SearchableActivity extends AppCompatActivity {
     private List<Integer> ids = new ArrayList<>();
     private List<String> words = new ArrayList<>();
     private List<String> cats = new ArrayList<>();
-    private List<String> files = new ArrayList<>();
+    private List<Integer> files = new ArrayList<>();
     private List<String> roots = new ArrayList<>();
     public static List<Boolean> faves = new ArrayList<>();
     private List<String> vars = new ArrayList<>();
@@ -143,7 +142,7 @@ public class SearchableActivity extends AppCompatActivity {
             ids.add(Integer.valueOf(extras[0]));
             words.add(extras[1]);
             cats.add(extras[2]);
-            files.add(extras[3]);
+            files.add(Integer.valueOf(extras[3]));
             roots.add(extras[4]);
             faves.add(extras[5].equals("1"));
             vars.add(extras[6]);
@@ -169,11 +168,10 @@ public class SearchableActivity extends AppCompatActivity {
                     SLAdbContract.SLAdbSLA.COL_WORD,
                     SLAdbContract.SLAdbSLA.COL_CAT,
                     SLAdbContract.SLAdbSLA.COL_FILE,
-                    SLAdbContract.SLAdbSLA.COL_ROOT,
                     SLAdbContract.SLAdbSLA.COL_FAVE,
                     SLAdbContract.SLAdbSLA.COL_VAR
             };
-            String[] catproj = {SLAdbContract.SLAdbCAT.COL_CAT};
+
             String selection = "";
             String[] selectionArgs = {};
 
@@ -195,7 +193,7 @@ public class SearchableActivity extends AppCompatActivity {
             }
 
             // sort
-            //String sortOrder = SLAdbContract.SLAdbSLA.COL_WORD;
+            String sortOrder = SLAdbContract.SLAdbSLA.COL_WORD;
 
             Cursor cursor = db.query(
                     SLAdbContract.SLAdbSLA.TABLE_NAME,      // The table to query
@@ -204,39 +202,43 @@ public class SearchableActivity extends AppCompatActivity {
                     selectionArgs,                          // The values for the WHERE clause
                     null,                                   // don't group the rows
                     null,                                   // don't filter by row groups
-                    null                                    // The sort order
+                    sortOrder                               // The sort order
             );
 
             while (cursor.moveToNext()) {
                 Integer id = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_ID));
                 String word = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_WORD));
                 String cat = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_CAT));
-                String file = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FILE));
-                String root = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_ROOT));
+                Integer file = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FILE));
                 Integer fave = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FAVE));
                 String var = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_VAR));
                 ids.add(id);
                 words.add(word);
                 files.add(file);
-                roots.add(root);
+                cats.add(cat);
                 faves.add(fave==1);
                 vars.add(var);
-                selection = SLAdbContract.SLAdbCAT.COL_ID + " in (?";
-                int len = cat.length();
-                if (len > 1)
-                    selection += String.format("%0" + (len - 1) + "d", 0).replace("0", ",?");
-                selection += ")";
-                List<String> list = new ArrayList<String>(Arrays.asList(cat.split("")));
-                list.remove(0);
-                selectionArgs = list.toArray(new String[list.size()]);
-                Cursor csr = db.query(SLAdbContract.SLAdbCAT.TABLE_NAME, catproj, selection, selectionArgs, null, null, null);
-                cat = "";
-                while (csr.moveToNext()) {
-                    if (cat != "") cat += ", ";
-                    cat += csr.getString(csr.getColumnIndexOrThrow(SLAdbContract.SLAdbCAT.COL_CAT));
+                // get related words
+                String[] proj = {SLAdbContract.SLAdbSLA.COL_WORD};
+                // Filter results WHERE
+                String sel = SLAdbContract.SLAdbSLA.COL_FILE + " = ? and " + SLAdbContract.SLAdbSLA.COL_WORD + " <> ?";
+                String[] selArgs = { file.toString(), word };
+                Cursor cur = db.query(
+                        SLAdbContract.SLAdbSLA.TABLE_NAME,      // The table to query
+                        proj,                                   // The columns to return
+                        sel,                                    // The columns for the WHERE clause
+                        selArgs,                                // The values for the WHERE clause
+                        null,                                   // don't group the rows
+                        null,                                   // don't filter by row groups
+                        sortOrder                               // The sort order
+                );
+                String related = "";
+                while(cur.moveToNext()) {
+                    if (related != "") related += ", ";
+                    related += cur.getString(cur.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_WORD));
                 }
-                cats.add(cat);
-                csr.close();
+                cur.close();
+                roots.add(related);
             }
             cursor.close();
             db.close();

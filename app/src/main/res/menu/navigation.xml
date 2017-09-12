@@ -16,4 +16,10 @@
         android:icon="@drawable/ic_filter_3_black_24dp"
         android:title="@string/variant3" />
 
+    <item
+        android:id="@+id/navigation_var4"
+        android:icon="@drawable/ic_filter_4_black_24dp"
+        android:title="@string/variant4" />
+
+
 </menu>

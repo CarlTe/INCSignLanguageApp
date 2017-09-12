@@ -31,48 +31,54 @@
                 android:layout_weight="1"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/video_margin" />
+                android:paddingLeft="@dimen/video_margin"
+                android:paddingRight="@dimen/video_margin"/>
             <CheckBox
                 android:id="@+id/favorite"
                 android:button="@android:drawable/btn_star"
                 android:background="@android:color/transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/video_margin" />
+                android:layout_marginRight="@dimen/video_margin"
+                android:layout_marginEnd="@dimen/video_margin"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
+            android:layout_weight="1"
             android:layout_height="0px"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/textView_categoriesLabel"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/video_margin" />
+                android:paddingLeft="@dimen/video_margin"
+                android:paddingRight="@dimen/video_margin"/>
 
             <TextView
                 android:id="@+id/textView_categories"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:paddingLeft="@dimen/video_margin"
+                android:paddingRight="@dimen/video_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/textView_relatedLabel"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/video_margin" />
+                android:paddingLeft="@dimen/video_margin"
+                android:paddingRight="@dimen/video_margin"/>
 
             <TextView
                 android:id="@+id/textView_related"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:paddingLeft="@dimen/video_margin"
+                android:paddingRight="@dimen/video_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

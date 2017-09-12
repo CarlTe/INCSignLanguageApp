@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         // of the RecyclerView
         recyclerView.setHasFixedSize(true);
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager = new GridLayoutManager(this,3);
         recyclerView.setLayoutManager(mLayoutManager);
         List<String> cats = new ArrayList<>();
         List<String> ids = new ArrayList<>();

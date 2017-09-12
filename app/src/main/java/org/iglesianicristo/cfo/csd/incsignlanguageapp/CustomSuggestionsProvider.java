@@ -10,10 +10,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class CustomSuggestionsProvider extends ContentProvider {
 
     @Override
@@ -33,12 +29,10 @@ public class CustomSuggestionsProvider extends ContentProvider {
                 SLAdbContract.SLAdbSLA.COL_WORD,
                 SLAdbContract.SLAdbSLA.COL_CAT,
                 SLAdbContract.SLAdbSLA.COL_FILE,
-                SLAdbContract.SLAdbSLA.COL_ROOT,
                 SLAdbContract.SLAdbSLA.COL_FAVE,
                 SLAdbContract.SLAdbSLA.COL_VAR
         };
         MatrixCursor matrixCursor = new MatrixCursor(suggestionTable);
-        String[] catproj = {SLAdbContract.SLAdbCAT.COL_CAT};
 
         selection = SLAdbContract.SLAdbSLA.COL_WORD + " like ?";
         selectionArgs = new String[] {uri.getLastPathSegment().toLowerCase() + "%"};
@@ -57,30 +51,35 @@ public class CustomSuggestionsProvider extends ContentProvider {
             Integer id = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_ID));
             String word = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_WORD));
             String cat = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_CAT));
-            String file = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FILE));
-            String root = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_ROOT));
+            Integer file = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FILE));
             Integer fave = cursor.getInt(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_FAVE));
             String var = cursor.getString(cursor.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_VAR));
-            // form the "where in" select string
-            selection = SLAdbContract.SLAdbCAT.COL_ID + " in (?";
-            int len = cat.length();
-            if(len > 1) selection += String.format("%0" + (len-1) + "d", 0).replace("0",",?");
-            selection += ")";
-            // gather all categories that this sign word belongs
-            List<String> list = new ArrayList<String>(Arrays.asList(cat.split("")));
-            list.remove(0);
-            selectionArgs = list.toArray(new String[list.size()]);
-            Cursor csr = db.query(SLAdbContract.SLAdbCAT.TABLE_NAME,catproj,selection,selectionArgs,null,null,null);
-            cat = "";
-            while(csr.moveToNext()) {
-                if (cat != "") cat += ", ";
-                cat += csr.getString(csr.getColumnIndexOrThrow(SLAdbContract.SLAdbCAT.COL_CAT));
+            // get related words
+            String[] proj = {SLAdbContract.SLAdbSLA.COL_WORD};
+            // Filter results WHERE
+            String sel = SLAdbContract.SLAdbSLA.COL_FILE + " = ? and " + SLAdbContract.SLAdbSLA.COL_WORD + " <> ?";
+            String[] selArgs = { file.toString(), word };
+            // sort
+            sortOrder = SLAdbContract.SLAdbSLA.COL_WORD;
+            Cursor cur = db.query(
+                    SLAdbContract.SLAdbSLA.TABLE_NAME,      // The table to query
+                    proj,                                   // The columns to return
+                    sel,                                    // The columns for the WHERE clause
+                    selArgs,                                // The values for the WHERE clause
+                    null,                                   // don't group the rows
+                    null,                                   // don't filter by row groups
+                    sortOrder                               // The sort order
+            );
+            String related = "";
+            while(cur.moveToNext()) {
+                if (related != "") related += ", ";
+                related += cur.getString(cur.getColumnIndexOrThrow(SLAdbContract.SLAdbSLA.COL_WORD));
             }
+            cur.close();
             // category icon
             Uri searchIconUri = Uri.parse("android.resource://org.iglesianicristo.cfo.csd.signlanguageapp/mipmap/ic_launcher.png");
             // add to cursor
-            matrixCursor.addRow(new Object[] {id,word,cat,searchIconUri,id+":"+word+":"+cat+":"+file+":"+root+":"+fave+":"+var});
-            csr.close();
+            matrixCursor.addRow(new Object[] {id,word,related,searchIconUri,id+":"+word+":"+cat+":"+file+":"+related+":"+fave+":"+var});
         }
         cursor.close();
         db.close();

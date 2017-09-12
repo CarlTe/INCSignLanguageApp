@@ -17,13 +17,13 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     public static final String ADAPTER_POSITION = "ADAPTER_POSITION";
-    private List<Integer> ids;
-    private List<String> words;
-    private List<String> cats;
-    private List<String> files;
-    private List<String> roots;
-    private List<Boolean> faves;
-    private List<String> vars;
+    private List<Integer> ids;          // id
+    private List<String> words;         // word
+    private List<String> cats;          // category
+    private List<Integer> files;        // filename (root)
+    private List<String> roots;         // related words
+    private List<Boolean> faves;        // favorited?
+    private List<String> vars;          // number of variants
     private Context context;
 
     // Provide a reference to the views for each data item
@@ -76,7 +76,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerViewAdapter(Context myContext, List<Integer> myIds, List<String> myWords, List<String> myCats, List<String> myFiles, List<String> myRoots, List<Boolean> myFaves, List<String> myVars) {
+    public RecyclerViewAdapter(Context myContext, List<Integer> myIds, List<String> myWords, List<String> myCats, List<Integer> myFiles, List<String> myRoots, List<Boolean> myFaves, List<String> myVars) {
         context = myContext;
         ids = myIds;
         words = myWords;
@@ -107,7 +107,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         // - replace the contents of the view with that element
         holder.catIcon.setImageResource(R.mipmap.ic_launcher);
         holder.txtHeader.setText(words.get(position));
-        holder.txtFooter.setText(cats.get(position));
+        holder.txtFooter.setText(roots.get(position));
         holder.favChk.setChecked(faves.get(position));
     }
 

@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="fave_margin">28dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="video_margin">12dp</dimen>
     <dimen name="thin_margin">10dp</dimen>
