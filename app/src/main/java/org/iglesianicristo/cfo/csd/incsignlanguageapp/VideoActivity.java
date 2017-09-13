@@ -2,6 +2,7 @@ package org.iglesianicristo.cfo.csd.incsignlanguageapp;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -55,6 +57,7 @@ public class VideoActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(word);
         TextView textViewWord = (TextView) findViewById(R.id.textView_word);
+        textViewWord.setMovementMethod(new ScrollingMovementMethod());
         int variantsNum = var.length();
         if(variantsNum > 1) {
             textViewWord.setText(var); // this must be 'collective' name
@@ -65,6 +68,7 @@ public class VideoActivity extends AppCompatActivity {
         }
 
         TextView textViewRelated = (TextView) findViewById(R.id.textView_related);
+        textViewRelated.setMovementMethod(new ScrollingMovementMethod());
         textViewRelated.setText(root);
         if(root.length()>0) {
             TextView textViewRelatedLabel = (TextView) findViewById(R.id.textView_relatedLabel);
@@ -134,7 +138,7 @@ public class VideoActivity extends AppCompatActivity {
 
         packageName = getPackageName();
         videoFile = intent.getIntExtra(SearchableActivity.VIDEO_FILE,0);
-        videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+videoFile, "raw", packageName)));
+        videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier(videoFile+".mp4", "raw", packageName)));
 
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -152,6 +156,10 @@ public class VideoActivity extends AppCompatActivity {
             }
             navigation.setVisibility(View.VISIBLE);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+            // set related words (max lines) depending on orientation
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            textViewRelated.setMaxLines(2);
+            else textViewRelated.setMaxLines(6);
         }
     }
 
@@ -168,16 +176,16 @@ public class VideoActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_var1:
-                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+videoFile, "raw", packageName)));
+                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier(videoFile+".mp4", "raw", packageName)));
                     return true;
                 case R.id.navigation_var2:
-                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+(videoFile+1), "raw", packageName)));
+                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier((videoFile+1)+".mp4", "raw", packageName)));
                     return true;
                 case R.id.navigation_var3:
-                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+(videoFile+2), "raw", packageName)));
+                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier((videoFile+2)+".mp4", "raw", packageName)));
                     return true;
                 case R.id.navigation_var4:
-                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier("v"+(videoFile+3), "raw", packageName)));
+                    videoView.setVideoURI(Uri.parse("android.resource://" + packageName + "/" + getResources().getIdentifier((videoFile+3)+".mp4", "raw", packageName)));
                     return true;
             }
             return false;

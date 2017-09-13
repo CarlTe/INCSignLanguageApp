@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/video_margin"
         android:paddingRight="@dimen/video_margin"
+        android:scrollbars="vertical"
+        android:maxLines="1"
         app:layout_constraintTop_toBottomOf="@+id/video_view" />
 
     <CheckBox
@@ -71,6 +73,8 @@
         android:paddingRight="@dimen/video_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        android:maxLines="4"
         app:layout_constraintTop_toBottomOf="@+id/textView_relatedLabel" />
 
     <android.support.design.widget.BottomNavigationView
